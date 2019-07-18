@@ -4,9 +4,6 @@ class Creature {
     public $legs;
     public $arms;
     public $eyes;
-    public function someLegs() {
-        echo $this->legs;
-    }
 }
 
 $dog = new Creature();
@@ -37,66 +34,57 @@ $rnparts = array_rand($parts);
 $rndcreature = $creatures[$rncreatures];
 $rndpart = $parts[$rnparts];
 
-function answer() {
-    if ($rndcreature == 'dog') {
-        switch ($rndpart) {
-            case 'legs':
-                $result = $dog->legs;
-                break;
-            case 'arms':
-                $result = $dog->arms;
-                break;
-            case 'eyes':
-                $result = $dog->eyes;
-                break;
+if ($rndcreature == 'dog') {
+    switch ($rndpart) {
+        case 'legs':
+            $result = $dog->legs;
+            break;
+        case 'arms':
+            $result = $dog->arms;
+            break;
+        case 'eyes':
+            $result = $dog->eyes;
+            break;
 
-            default:
-                $result = "answer error";
-                break;
-        }    
+        default:
+            $result = "answer error";
+            break;
     }
-    elseif ($rndcreature == 'human') {
-        switch ($rndpart) {
-            case 'legs':
-                $result = $human->legs;
-                break;
-            case 'arms':
-                $result = $human->arms;
-                break;
-            case 'eyes':
-                $result = $human->eyes;
-                break;
+}
+elseif ($rndcreature == 'human') {
+    switch ($rndpart) {
+        case 'legs':
+            $result = $human->legs;
+            break;
+        case 'arms':
+            $result = $human->arms;
+            break;
+        case 'eyes':
+            $result = $human->eyes;
+            break;
 
-            default:
-                $result = "answer error 2";
-        }
+        default:
+            $result = "answer error 2";
     }
-    elseif ($rndcreature == 'spider') {
-        switch ($rndpart) {
-            case 'legs':
-                $result = $spider->legs;
-                break;
-            case 'arms':
-                $result = $spider->arms;
-                break;
-            case 'eyes':
-                $result = $spider->eyes;
-                break;
+}
+elseif ($rndcreature == 'spider') {
+    switch ($rndpart) {
+        case 'legs':
+            $result = $spider->legs;
+            break;
+        case 'arms':
+            $result = $spider->arms;
+            break;
+        case 'eyes':
+            $result = $spider->eyes;
+            break;
 
-            default:
-                $result = "answer error 3";
-        }
+        default:
+            $result = "answer error 3";
     }
-    return $restult;
 }
 
-function tester1() {
-    return $dog->legs;
-}
+$q1 = 'How many ' . $rndpart . ' does a ' . $rndcreature . ' have? ';
+$a1 = $result;
 
-$q1 = 'How many legs does a dog have?';
-$a1 = $dog->legs;
-
-
-$q2 = 'How many ' . $rndpart . ' does a ' . $rndcreature . ' have? ';
-$a2 = tester1();
+echo $q1 . '<br>';
