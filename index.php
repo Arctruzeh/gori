@@ -25,11 +25,11 @@ session_start();
 
     <?php
 
-include 'Creature.php';
+        include 'Creature.php';
 
-$_SESSION['correctanswer'] = $a1;
+        $_SESSION['correctanswer'] = $a1;
 
-?>
+    ?>
 
     <br>
     <form name="form1" action="checkanswer.php" method="POST">

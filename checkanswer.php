@@ -28,24 +28,28 @@ $a1 = $_SESSION['correctanswer'];
 
     <?php
 
-if ($useranswer == '') {
-    echo 'put something in';
-} elseif ($useranswer == $a1) {
-    echo 'You are a genius!';
-} else {
-    echo 'You are an idiot!';
-}
+        if ($useranswer == '') {
+            echo 'Put something in...';
+        } elseif ($useranswer == $a1) {
+            echo 'You are a genius!';
+        } else {
+            echo 'You are an idiot!';
+        }
 
-?>
+    ?>
 
     <br>
 
-    <?php include 'Creature.php';
+    <?php 
+    
+        include 'Creature.php';
 
-$_SESSION['correctanswer'] = $a1;
+        $_SESSION['correctanswer'] = $a1;
 
-?>
+    ?>
+
     <br>
+
     <form name="form1" action="checkanswer.php" method="POST">
         <input placeholder="answer" type="text" name="useranswer" class="myinput" autofocus>
         <button type="submit">Submit</button>
