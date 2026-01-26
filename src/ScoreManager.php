@@ -2,46 +2,52 @@
 
 namespace App;
 
+use App\Http\Session;
+use App\Http\Request;
+
 /**
  * ScoreManager Class
  * Encapsulates the player's game state (Score and Streak).
- * Handles all session manipulation internally.
+ * Handles state manipulation via injected Session and Request objects.
  */
 class ScoreManager
 {
-    public function __construct()
+    private $session;
+    private $request;
+
+    public function __construct(Session $session, Request $request)
     {
-        // Ensure session is started (though usually handled by index.php, it's good safety)
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        $this->session = $session;
+        $this->request = $request;
 
         // Initialize if not set
-        if (!isset($_SESSION['score'])) {
-            $_SESSION['score'] = 0;
+        if (!$this->session->has('score')) {
+            $this->session->set('score', 0);
         }
-        if (!isset($_SESSION['streak'])) {
-            $_SESSION['streak'] = 0;
+        if (!$this->session->has('streak')) {
+            $this->session->set('streak', 0);
         }
     }
 
     public function getScore()
     {
-        return $_SESSION['score'];
+        return $this->session->get('score', 0);
     }
 
     public function getStreak()
     {
-        return $_SESSION['streak'];
+        return $this->session->get('streak', 0);
     }
 
     public function recordSuccess()
     {
-        $_SESSION['streak']++;
+        $streak = $this->session->get('streak', 0) + 1;
+        $this->session->set('streak', $streak);
 
         // Base points + Streak bonus
-        $points = 10 + ($_SESSION['streak'] * 2);
-        $_SESSION['score'] += $points;
+        $points = 10 + ($streak * 2);
+        $score = $this->session->get('score', 0) + $points;
+        $this->session->set('score', $score);
 
         // Check High Score
         $this->updateHighScore();
@@ -51,18 +57,18 @@ class ScoreManager
 
     public function recordFailure()
     {
-        $_SESSION['streak'] = 0;
+        $this->session->set('streak', 0);
     }
 
     public function resetGame()
     {
-        $_SESSION['score'] = 0;
-        $_SESSION['streak'] = 0;
+        $this->session->set('score', 0);
+        $this->session->set('streak', 0);
     }
 
     public function getRank()
     {
-        $score = $_SESSION['score'];
+        $score = $this->getScore();
 
         if ($score >= 1000)
             return '🦖 Kaiju';
@@ -82,17 +88,17 @@ class ScoreManager
 
     public function getHighScore()
     {
-        return $_COOKIE['highscore'] ?? 0;
+        return $this->request->getCookie('highscore', 0);
     }
 
     private function updateHighScore()
     {
-        $current = $_SESSION['score'];
+        $current = $this->getScore();
         $high = $this->getHighScore();
 
         if ($current > $high) {
             // Set cookie for 1 year
-            setcookie('highscore', $current, time() + (86400 * 365), "/");
+            $this->request->setCookie('highscore', $current, time() + (86400 * 365), "/");
         }
     }
 }

@@ -1,7 +1,5 @@
 <?php
 
-session_start();
-
 // Simple Autoloader
 spl_autoload_register(function ($class) {
     $prefix = 'App\\';
@@ -20,44 +18,39 @@ spl_autoload_register(function ($class) {
     }
 });
 
+use App\Game;
+use App\ScoreManager;
+use App\Http\Session;
+use App\Http\Request;
+
+$session = new Session();
+$request = new Request();
+$scoreManager = new ScoreManager($session, $request);
+
 $message = '';
 $messageType = '';
 
-// Initialize Score and Streak
-if (!isset($_SESSION['score'])) {
-    $_SESSION['score'] = 0;
-}
-if (!isset($_SESSION['streak'])) {
-    $_SESSION['streak'] = 0;
-}
-
-use App\Game;
-use App\ScoreManager;
-
-$scoreManager = new ScoreManager();
-
 // Handle Reset Request
-if (isset($_POST['action']) && $_POST['action'] === 'reset') {
+if ($request->getPost('action') === 'reset') {
     $scoreManager->resetGame();
-    // Redirect to clear post data so refresh doesn't re-trigger
+    // Redirect to clear post data
     header("Location: ./");
     exit;
 }
 
-// Initialize Pending Answers
-if (!isset($_SESSION['pending_answers'])) {
-    $_SESSION['pending_answers'] = [];
+// Initialize Pending Answers in Session if not exists
+if (!$session->has('pending_answers')) {
+    $session->set('pending_answers', []);
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['useranswer'])) {
-    $useranswer = $_POST['useranswer'] ?? '';
-    // Retrieve the token from the form
-    $token = $_POST['token'] ?? '';
+if ($request->isPost() && $request->getPost('useranswer') !== null) {
+    $useranswer = $request->getPost('useranswer');
+    $token = $request->getPost('token', '');
 
-    // Get the correct answer associated with this specific question token
-    $correctAnswer = $_SESSION['pending_answers'][$token] ?? '';
+    $pendingAnswers = $session->get('pending_answers');
+    $correctAnswer = $pendingAnswers[$token] ?? '';
 
-    if ($useranswer == '') {
+    if ($useranswer === '') {
         $message = '<div class="alert alert-warning">Put something in...</div>';
         $messageType = 'empty';
     } elseif ($useranswer == $correctAnswer) {
@@ -95,9 +88,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['useranswer'])) {
 
         $scoreManager->recordFailure();
     }
-
-    // Optional: cleanup used token so it can't be replayed
-    // unset($_SESSION['pending_answers'][$token]);
 }
 
 $score = $scoreManager->getScore();
@@ -194,12 +184,14 @@ $streak = $scoreManager->getStreak();
 
     // Generate unique token for this question
     $token = uniqid();
-    $_SESSION['pending_answers'][$token] = $a1;
+    $pendingAnswers = $session->get('pending_answers', []);
+    $pendingAnswers[$token] = $a1;
 
     // Cleanup old tokens to prevent session bloat
-    if (count($_SESSION['pending_answers']) > 20) {
-        $_SESSION['pending_answers'] = array_slice($_SESSION['pending_answers'], -20, 20, true);
+    if (count($pendingAnswers) > 20) {
+        $pendingAnswers = array_slice($pendingAnswers, -20, 20, true);
     }
+    $session->set('pending_answers', $pendingAnswers);
 
     // Get choices for UI
     $choices = $roundData['choices'];
