@@ -9,7 +9,7 @@ namespace App;
 class Game
 {
     private $creatures = [];
-    private $parts = ['legs', 'arms', 'eyes', 'wings', 'tails'];
+    private $parts = ['legs', 'arms', 'eyes', 'wings', 'tails', 'stomachs', 'antennae', 'chromosomes', 'teeth', 'toes', 'neck_vertebrae'];
     private $possibleAnswers = [];
 
     public function __construct()
@@ -20,7 +20,17 @@ class Game
             new Human(),
             new Spider(),
             new Bird(),
-            new Centipede()
+            new Centipede(),
+            new Cow(),
+            new Pig(),
+            new Sheep(),
+            new Chicken(),
+            new Horse(),
+            new Duck(),
+            new Goat(),
+            new Capybara(),
+            new Sloth(),
+            new Platypus()
         ];
 
         // Pre-calculate all possible valid answers
@@ -65,8 +75,20 @@ class Game
         // Shuffle the final buttons so the answer isn't always first
         shuffle($choices);
 
+        $name = $randomCreature->getName();
+        $displayName = str_replace('_', ' ', $randomPart);
+        $templates = [
+            "How many $displayName does a $name have?",
+            "A $name has how many $displayName?",
+            "Identify the number of $displayName on a $name.",
+            "Quick! How many $displayName for a $name?",
+            "The total count of $displayName on a $name is..."
+        ];
+
+        $questionText = $templates[array_rand($templates)];
+
         return [
-            'question' => "How many $randomPart does a " . $randomCreature->getName() . " have? ",
+            'question' => $questionText,
             'answer' => $trueAnswer,
             'choices' => $choices
         ];

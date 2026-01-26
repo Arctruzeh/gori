@@ -6,7 +6,8 @@ class Spider extends Creature
 {
     public function __construct()
     {
-        parent::__construct(8, 0, 8, 0, 0);
+        // legs, arms, eyes, wings, tails, stomachs, antennae
+        parent::__construct(8, 0, 8, 0, 0, 1, 0, 24, 0, 0, 0);
     }
 
     public function getName()

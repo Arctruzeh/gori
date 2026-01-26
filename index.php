@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['useranswer'])) {
 
         $scoreManager->recordSuccess();
     } else {
-        $message = '<div class="alert alert-danger">You are an idiot!</div>';
+        $message = '<div class="alert alert-danger">You are an idiot! The correct answer was <strong>' . $correctAnswer . '</strong>.</div>';
         $messageType = 'error';
 
         $scoreManager->recordFailure();
@@ -107,7 +107,7 @@ $streak = $scoreManager->getStreak();
             }
 
             document.documentElement.setAttribute('data-theme', theme);
-    })();
+        })();
     </script>
 </head>
 
@@ -155,7 +155,7 @@ $streak = $scoreManager->getStreak();
     </div>
 
     <?php if ($message): ?>
-        <div class="message-container" id="message-container" data-type="<?php echo $messageType; ?>">
+        <div class="message-container" id="message-container">
             <?php echo $message; ?>
         </div>
     <?php endif; ?>
@@ -171,7 +171,7 @@ $streak = $scoreManager->getStreak();
     // Generate unique token for this question
     $token = uniqid();
     $_SESSION['pending_answers'][$token] = $a1;
-    
+
     // Cleanup old tokens to prevent session bloat
     if (count($_SESSION['pending_answers']) > 20) {
         $_SESSION['pending_answers'] = array_slice($_SESSION['pending_answers'], -20, 20, true);
@@ -208,14 +208,10 @@ $streak = $scoreManager->getStreak();
                 // If there is a message, hide the game content initially
                 if (gameContent) gameContent.style.display = 'none';
 
-                const type = container.dataset.type;
-                if (type === 'success') {
-                    spawnEmojis(['🧠', '⚡️']);
-                } else if (type === 'error') {
-                    spawnEmojis(['🤡', '💩']);
-                }
+                const isError = container.querySelector('.alert-danger') !== null;
+                const displayTime = isError ? 1600 : 900; // Give more time to read the answer if wrong
 
-                // Fade out after 0.9 seconds (900ms) - drastically faster
+                // Fade out after displayTime
                 setTimeout(() => {
                     container.classList.add('fade-out');
                     // Remove from DOM after animation completes (0.3s)
@@ -258,32 +254,6 @@ $streak = $scoreManager->getStreak();
             });
         });
 
-        function spawnEmojis(emojis) {
-            // If a single string is passed, convert to array
-            if (!Array.isArray(emojis)) {
-                emojis = [emojis];
-            }
-
-            const count = 30; // Number of particles
-            for (let i = 0; i < count; i++) {
-                const el = document.createElement('div');
-                // Pick a random emoji from the array
-                el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-                el.classList.add('emoji-particle');
-
-                // Random positioning
-                el.style.left = Math.random() * 100 + 'vw';
-                el.style.animationDuration = Math.random() * 2 + 3 + 's'; // 3-5 seconds
-                el.style.fontSize = Math.random() * 2 + 1 + 'rem'; // 1-3rem
-                el.style.opacity = Math.random();
-
-                document.body.appendChild(el);
-
-                // Remove after animation
-                setTimeout(() => {
-                    el.remove();
-                }, 5000);
-            }     }
     </script>
 </body>
 
