@@ -15,5 +15,5 @@ The game is built using the following OOP concepts and elements:
 ## How to Play
 
 The game will ask a question like "How many legs does a spider have?". Select the correct number from the options provided.
-- **Correct Answer**: You are a genius! (Score +1)
-- **Wrong Answer**: You are an idiot! (Score reset to 0)
+- **Correct Answer**: Displays a genius-themed message (e.g., "You are a genius!") and increases your score.
+- **Wrong Answer**: Displays an idiot-themed message (e.g., "You are an idiot!") and records a failure.

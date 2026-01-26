@@ -61,12 +61,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['useranswer'])) {
         $message = '<div class="alert alert-warning">Put something in...</div>';
         $messageType = 'empty';
     } elseif ($useranswer == $correctAnswer) {
-        $message = '<div class="alert alert-success">You are a genius!</div>';
+        $geniusMessages = [
+            "You are a genius!",
+            "You are a total genius!",
+            "Absolute genius!",
+            "Look at you, what a genius.",
+            "Clearly, you are a genius.",
+            "You are a genius, obviously.",
+            "Pure genius!",
+            "A true genius indeed!",
+            "Behold, a genius!"
+        ];
+        $selectedGenius = $geniusMessages[array_rand($geniusMessages)];
+        $message = '<div class="alert alert-success">' . $selectedGenius . '</div>';
         $messageType = 'success';
 
         $scoreManager->recordSuccess();
     } else {
-        $message = '<div class="alert alert-danger">You are an idiot! The correct answer was <strong>' . $correctAnswer . '</strong>.</div>';
+        $idiotMessages = [
+            "You are an idiot!",
+            "You are such an idiot!",
+            "Absolute idiot!",
+            "Total idiot move.",
+            "You are an idiot, clearly.",
+            "Don't be such an idiot!",
+            "What an idiot!",
+            "You complete idiot!",
+            "Maximum idiot level reached."
+        ];
+        $selectedIdiot = $idiotMessages[array_rand($idiotMessages)];
+        $message = '<div class="alert alert-danger">' . $selectedIdiot . ' The correct answer was <strong>' . $correctAnswer . '</strong>.</div>';
         $messageType = 'error';
 
         $scoreManager->recordFailure();
