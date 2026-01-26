@@ -1,4 +1,4 @@
-# gori
+# Genius or Idiot
 
 Live demo: https://ajlato-gori.up.railway.app/
 

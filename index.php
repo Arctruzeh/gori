@@ -44,10 +44,18 @@ if (isset($_POST['action']) && $_POST['action'] === 'reset') {
     exit;
 }
 
+// Initialize Pending Answers
+if (!isset($_SESSION['pending_answers'])) {
+    $_SESSION['pending_answers'] = [];
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['useranswer'])) {
     $useranswer = $_POST['useranswer'] ?? '';
-    // The previous answer stored in the session
-    $correctAnswer = $_SESSION['correctanswer'] ?? '';
+    // Retrieve the token from the form
+    $token = $_POST['token'] ?? '';
+
+    // Get the correct answer associated with this specific question token
+    $correctAnswer = $_SESSION['pending_answers'][$token] ?? '';
 
     if ($useranswer == '') {
         $message = '<div class="alert alert-warning">Put something in...</div>';
@@ -63,6 +71,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['useranswer'])) {
 
         $scoreManager->recordFailure();
     }
+
+    // Optional: cleanup used token so it can't be replayed
+    // unset($_SESSION['pending_answers'][$token]);
 }
 
 $score = $scoreManager->getScore();
@@ -96,7 +107,7 @@ $streak = $scoreManager->getStreak();
             }
 
             document.documentElement.setAttribute('data-theme', theme);
-        })();
+    })();
     </script>
 </head>
 
@@ -157,8 +168,14 @@ $streak = $scoreManager->getStreak();
     $q1 = $roundData['question'];
     $a1 = $roundData['answer'];
 
-    // Store the NEW correct answer for the next submission
-    $_SESSION['correctanswer'] = $a1;
+    // Generate unique token for this question
+    $token = uniqid();
+    $_SESSION['pending_answers'][$token] = $a1;
+    
+    // Cleanup old tokens to prevent session bloat
+    if (count($_SESSION['pending_answers']) > 20) {
+        $_SESSION['pending_answers'] = array_slice($_SESSION['pending_answers'], -20, 20, true);
+    }
 
     // Get choices for UI
     $choices = $roundData['choices'];
@@ -173,6 +190,7 @@ $streak = $scoreManager->getStreak();
 
         <!-- Action is empty to submit to same page -->
         <form name="form1" action="" method="POST" class="choices-grid">
+            <input type="hidden" name="token" value="<?php echo $token; ?>">
             <?php foreach ($choices as $choice): ?>
                 <button type="submit" name="useranswer" value="<?php echo $choice; ?>" class="choice-btn">
                     <?php echo $choice; ?>
@@ -265,8 +283,7 @@ $streak = $scoreManager->getStreak();
                 setTimeout(() => {
                     el.remove();
                 }, 5000);
-            }
-        }
+            }     }
     </script>
 </body>
 
