@@ -30,6 +30,6 @@ class Request
 
     public function setCookie(string $name, $value, int $expire = 0, string $path = "/"): void
     {
-        setcookie($name, $value, $expire, $path);
+        \setcookie($name, $value, $expire, $path);
     }
 }

@@ -43,7 +43,7 @@ abstract class Creature
      */
     public function getPartCount($part)
     {
-        if (property_exists($this, $part)) {
+        if (\property_exists($this, $part)) {
             return $this->$part;
         }
         return 0;

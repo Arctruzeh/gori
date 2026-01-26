@@ -17,18 +17,17 @@ class Response
 
     public function send()
     {
-        http_response_code($this->statusCode);
+        \http_response_code($this->statusCode);
 
         foreach ($this->headers as $name => $value) {
-            header("$name: $value");
+            \header("$name: $value");
         }
 
         echo $this->content;
     }
 
-    public static function redirect($url)
+    public static function redirect($url): self
     {
-        header("Location: $url");
-        exit;
+        return new self('', 302, ['Location' => $url]);
     }
 }

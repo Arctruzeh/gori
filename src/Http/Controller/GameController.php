@@ -74,12 +74,12 @@ class GameController
         $game = new Game();
         $roundData = $game->generateQuestion();
 
-        $token = uniqid();
+        $token = \uniqid();
         $pendingAnswers = $this->session->get('pending_answers', []);
         $pendingAnswers[$token] = $roundData['answer'];
 
-        if (count($pendingAnswers) > 20) {
-            $pendingAnswers = array_slice($pendingAnswers, -20, 20, true);
+        if (\count($pendingAnswers) > 20) {
+            $pendingAnswers = \array_slice($pendingAnswers, -20, 20, true);
         }
         $this->session->set('pending_answers', $pendingAnswers);
 
@@ -112,7 +112,7 @@ class GameController
             "A true genius indeed!",
             "Behold, a genius!"
         ];
-        $selectedGenius = $geniusMessages[array_rand($geniusMessages)];
+        $selectedGenius = $geniusMessages[\array_rand($geniusMessages)];
         return "<div class=\"alert alert-success\">$selectedGenius</div>";
     }
 
@@ -129,7 +129,7 @@ class GameController
             "You complete idiot!",
             "Maximum idiot level reached."
         ];
-        $selectedIdiot = $idiotMessages[array_rand($idiotMessages)];
+        $selectedIdiot = $idiotMessages[\array_rand($idiotMessages)];
         return "<div class=\"alert alert-danger\">$selectedIdiot The correct answer was <strong>$correctAnswer</strong>.</div>";
     }
 }

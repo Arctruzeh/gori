@@ -37,21 +37,21 @@ class Game
         foreach ($this->creatures as $creature) {
             foreach ($this->parts as $part) {
                 $count = $creature->getPartCount($part);
-                if (!in_array($count, $this->possibleAnswers)) {
+                if (!\in_array($count, $this->possibleAnswers)) {
                     $this->possibleAnswers[] = $count;
                 }
             }
         }
-        sort($this->possibleAnswers);
+        \sort($this->possibleAnswers);
     }
 
     public function generateQuestion()
     {
         // Pick random creature object
-        $randomCreature = $this->creatures[array_rand($this->creatures)];
+        $randomCreature = $this->creatures[\array_rand($this->creatures)];
 
         // Pick random part name
-        $randomPart = $this->parts[array_rand($this->parts)];
+        $randomPart = $this->parts[\array_rand($this->parts)];
 
         // Get the answer directly from the object (Polymorphism)
         $trueAnswer = $randomCreature->getPartCount($randomPart);
@@ -61,10 +61,10 @@ class Game
 
         // Get distractor answers from our pool of valid game numbers
         $pool = $this->possibleAnswers;
-        shuffle($pool);
+        \shuffle($pool);
 
         foreach ($pool as $option) {
-            if (count($choices) >= 4) {
+            if (\count($choices) >= 4) {
                 break;
             }
             if ($option !== $trueAnswer) {
@@ -73,10 +73,10 @@ class Game
         }
 
         // Shuffle the final buttons so the answer isn't always first
-        shuffle($choices);
+        \shuffle($choices);
 
         $name = $randomCreature->getName();
-        $displayName = str_replace('_', ' ', $randomPart);
+        $displayName = \str_replace('_', ' ', $randomPart);
         $templates = [
             "How many $displayName does a $name have?",
             "A $name has how many $displayName?",
@@ -85,7 +85,7 @@ class Game
             "The total count of $displayName on a $name is..."
         ];
 
-        $questionText = $templates[array_rand($templates)];
+        $questionText = $templates[\array_rand($templates)];
 
         return [
             'question' => $questionText,
