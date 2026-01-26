@@ -39,4 +39,18 @@ class Session
     {
         return $_SESSION;
     }
+    public function setFlash(string $key, $message): void
+    {
+        $_SESSION['flash'][$key] = $message;
+    }
+
+    public function getFlash(string $key)
+    {
+        if (isset($_SESSION['flash'][$key])) {
+            $message = $_SESSION['flash'][$key];
+            unset($_SESSION['flash'][$key]);
+            return $message;
+        }
+        return null;
+    }
 }

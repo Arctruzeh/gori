@@ -1,5 +1,9 @@
 {
     "require-dev": {
         "squizlabs/php_codesniffer": "^4.0"
+    },
+    "require": {
+        "ext-pdo": "*",
+        "ext-pdo_pgsql": "*"
     }
 }

@@ -92,7 +92,9 @@ class GameController
             'messageType' => $messageType,
             'question' => $roundData['question'],
             'choices' => $roundData['choices'],
-            'token' => $token
+            'token' => $token,
+            'isLoggedIn' => $this->session->has('user_id'),
+            'username' => $this->session->get('username')
         ];
 
         $content = $this->renderer->render('game', $viewData);

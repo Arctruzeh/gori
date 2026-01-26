@@ -25,14 +25,31 @@ class Kernel
 
     public function handle(): Response
     {
-        // Simple routing: if we had more controllers, we would add routing logic here.
-        $controller = new GameController(
-            $this->session,
-            $this->request,
-            $this->scoreManager,
-            $this->renderer
-        );
+        $action = $this->request->getQuery('action', 'game');
 
-        return $controller->index();
+        switch ($action) {
+            case 'login':
+                return (new \App\Http\Controller\AuthController($this->session, $this->request, $this->renderer))->showLogin();
+            case 'do_login':
+                return (new \App\Http\Controller\AuthController($this->session, $this->request, $this->renderer))->login();
+            case 'register':
+                return (new \App\Http\Controller\AuthController($this->session, $this->request, $this->renderer))->showRegister();
+            case 'do_register':
+                return (new \App\Http\Controller\AuthController($this->session, $this->request, $this->renderer))->register();
+            case 'logout':
+                return (new \App\Http\Controller\AuthController($this->session, $this->request, $this->renderer))->logout();
+            case 'profile':
+                return (new \App\Http\Controller\ProfileController($this->session, $this->renderer))->index();
+            case 'leaderboard':
+                return (new \App\Http\Controller\ProfileController($this->session, $this->renderer))->leaderboard();
+            case 'game':
+            default:
+                return (new GameController(
+                    $this->session,
+                    $this->request,
+                    $this->scoreManager,
+                    $this->renderer
+                ))->index();
+        }
     }
 }

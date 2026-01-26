@@ -32,4 +32,8 @@ class Request
     {
         \setcookie($name, $value, $expire, $path);
     }
+    public function input(string $key, $default = null)
+    {
+        return $_REQUEST[$key] ?? $default;
+    }
 }

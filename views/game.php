@@ -33,6 +33,19 @@
         <span id="theme-icon">☀️</span>
     </button>
 
+    <div style="position: absolute; top: 20px; right: 80px; font-family: sans-serif; z-index: 99;">
+        <a href="/?action=leaderboard" style="margin-right: 15px; text-decoration: none; color: inherit;">🏆
+            Leaderboard</a>
+        <?php if ($isLoggedIn): ?>
+            <a href="/?action=profile" style="margin-right: 15px; text-decoration: none; color: inherit;">👤
+                <?php echo htmlspecialchars($username); ?></a>
+            <a href="/?action=logout" style="text-decoration: none; color: inherit;">Logout</a>
+        <?php else: ?>
+            <a href="/?action=login" style="margin-right: 10px; text-decoration: none; color: inherit;">Login</a>
+            <a href="/?action=register" style="text-decoration: none; color: inherit;">Register</a>
+        <?php endif; ?>
+    </div>
+
     <div class="score-board">
         <div class="score-item">
             <span class="score-label">SCORE</span>

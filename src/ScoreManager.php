@@ -14,11 +14,13 @@ class ScoreManager
 {
     private $session;
     private $request;
+    private $scoreModel;
 
     public function __construct(Session $session, Request $request)
     {
         $this->session = $session;
         $this->request = $request;
+        $this->scoreModel = new \App\Model\Score();
 
         // Initialize if not set
         if (!$this->session->has('score')) {
@@ -27,7 +29,15 @@ class ScoreManager
         if (!$this->session->has('streak')) {
             $this->session->set('streak', 0);
         }
-        if (!$this->session->has('highscore')) {
+
+        // If logged in, sync high score from DB
+        if ($this->session->has('user_id')) {
+            $dbHigh = $this->scoreModel->getUserBestScore($this->session->get('user_id'));
+            $sessionHigh = $this->session->get('highscore', 0);
+            if ($dbHigh > $sessionHigh) {
+                $this->session->set('highscore', $dbHigh);
+            }
+        } elseif (!$this->session->has('highscore')) {
             $this->session->set('highscore', 0);
         }
     }
@@ -101,6 +111,17 @@ class ScoreManager
 
         if ($current > $high) {
             $this->session->set('highscore', $current);
+
+            // Save to DB if logged in
+            if ($this->session->has('user_id')) {
+                // Only save if it's strictly better than what we might have saved previously
+                // to avoid one DB call per point.
+                // However, users might want to see their progress?
+                // For now, let's just save the new high score.
+                // Ideally we check DB best again, but we synced in constructor.
+                // We'll trust session highscore is accurate representation of "best known".
+                $this->scoreModel->addScore($this->session->get('user_id'), $current);
+            }
         }
     }
 }
