@@ -113,7 +113,7 @@ class GameController
             "Behold, a genius!"
         ];
         $selectedGenius = $geniusMessages[array_rand($geniusMessages)];
-        return '<div class="alert alert-success">' . $selectedGenius . '</div>';
+        return "<div class=\"alert alert-success\">$selectedGenius</div>";
     }
 
     private function generateFailureMessage($correctAnswer): string
@@ -130,6 +130,6 @@ class GameController
             "Maximum idiot level reached."
         ];
         $selectedIdiot = $idiotMessages[array_rand($idiotMessages)];
-        return '<div class="alert alert-danger">' . $selectedIdiot . ' The correct answer was <strong>' . $correctAnswer . '</strong>.</div>';
+        return "<div class=\"alert alert-danger\">$selectedIdiot The correct answer was <strong>$correctAnswer</strong>.</div>";
     }
 }

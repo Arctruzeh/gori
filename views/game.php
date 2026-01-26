@@ -57,7 +57,7 @@
         <div class="score-item">
             <span class="score-label">STREAK</span>
             <span class="score-value fire">
-                <?php echo $streak > 0 ? '🔥 ' . $streak : '0'; ?>
+                <?php echo $streak > 0 ? "🔥 $streak" : '0'; ?>
             </span>
         </div>
 

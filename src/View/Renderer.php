@@ -15,7 +15,7 @@ class Renderer
     {
         extract($data);
         ob_start();
-        include $this->basePath . $template . '.php';
+        include "{$this->basePath}{$template}.php";
         return ob_get_clean();
     }
 }
