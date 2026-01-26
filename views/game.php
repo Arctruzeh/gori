@@ -8,6 +8,7 @@
     <title>Genius or Idiot</title>
     <meta name="description"
         content="A fun demo game to demonstrate OOP with PHP. Test your knowledge and see if you are a genius or an idiot!" />
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
     <link rel="stylesheet" href="/assets/css/main.css">
     <script>
         (function () {
