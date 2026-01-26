@@ -1,0 +1,770 @@
+/* Main CSS for Genius or Idiot */
+:root {
+    /* Common Defaults */
+    --border-radius: 16px;
+    --transition-speed: 0.3s;
+}
+
+/* GLOBAL RESET - Essential now that Bootstrap is gone */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* 
+   ========================================
+   LIGHT THEME (Sunny Sky) 
+   ========================================
+*/
+:root,
+[data-theme="light"] {
+    --primary-color: #0ea5e9;
+    /* Sky Blue */
+    --primary-hover: #0284c7;
+    --text-color: #1e293b;
+    --text-shadow: none;
+    --glass-bg: rgba(255, 255, 255, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.8);
+    --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+
+    --input-bg: rgba(255, 255, 255, 0.9);
+    --input-border: #e2e8f0;
+    --input-text: #0f172a;
+    --input-placeholder: #94a3b8;
+
+    --bg-gradient: linear-gradient(180deg, #60a5fa 0%, #bfdbfe 100%);
+
+    /* Alert Colors */
+    --success-bg: #dcfce7;
+    --success-text: #166534;
+    --error-bg: #fee2e2;
+    --error-text: #991b1b;
+    --warning-bg: #fef9c3;
+    --warning-text: #854d0e;
+}
+
+/* 
+   ========================================
+   DARK THEME (Space)
+   ========================================
+*/
+[data-theme="dark"] {
+    --primary-color: #6366f1;
+    /* Indigo */
+    --primary-hover: #4f46e5;
+    --text-color: #ffffff;
+    --text-shadow: 0 0 10px rgba(99, 102, 241, 0.8);
+    --glass-bg: rgba(20, 20, 40, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+
+    --input-bg: rgba(0, 0, 0, 0.3);
+    --input-border: rgba(255, 255, 255, 0.2);
+    --input-text: #ffffff;
+    --input-placeholder: rgba(255, 255, 255, 0.5);
+
+    --bg-gradient: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+
+    /* Alert Colors */
+    --success-bg: rgba(34, 197, 94, 0.9);
+    --success-text: #ffffff;
+    --error-bg: rgba(239, 68, 68, 0.9);
+    --error-text: #ffffff;
+    --warning-bg: rgba(234, 179, 8, 0.9);
+    --warning-text: #ffffff;
+}
+
+body {
+    background: var(--bg-gradient);
+    color: var(--text-color);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 20px;
+    overflow-x: hidden;
+    position: relative;
+    transition: background var(--transition-speed), color var(--transition-speed);
+}
+
+/* 
+    BACKGROUND EFFECTS 
+    We use specific classes or hierarchy to toggle these effects
+*/
+
+/* --- DARK MODE EFFECTS (Stars & Nebula) --- */
+[data-theme="dark"] body::before {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    height: 1px;
+    width: 1px;
+    border-radius: 50%;
+    box-shadow:
+        -40vw -40vh 2px white,
+        20vw -30vh 1px white,
+        -20vw 30vh 1px white,
+        30vw 10vh 2px white,
+        -30vw -10vh 1px white,
+        10vw 40vh 2px white,
+        40vw -20vh 1px white,
+        -10vw 10vh 1px white,
+        -35vw -35vh 1px rgba(255, 255, 255, 0.8),
+        25vw -25vh 2px rgba(255, 255, 255, 0.7),
+        -45vw 40vh 1px rgba(255, 255, 255, 0.4);
+    animation: zoomStars 200s linear infinite;
+    z-index: -2;
+}
+
+[data-theme="dark"] body::after {
+    content: "";
+    position: fixed;
+    bottom: -10vh;
+    right: -10vw;
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, rgba(79, 70, 229, 0.1) 40%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(40px);
+    z-index: -1;
+    animation: pulseGlow 10s ease-in-out infinite alternate;
+}
+
+/* --- LIGHT MODE EFFECTS (Sun & Clouds) --- */
+/* We can use general siblings or just scoping */
+[data-theme="light"] body::after {
+    content: "";
+    position: fixed;
+    top: -10vh;
+    right: -10vw;
+    width: 40vw;
+    height: 40vw;
+    background: radial-gradient(circle, #fde047 30%, rgba(253, 224, 71, 0.4) 60%, transparent 80%);
+    border-radius: 50%;
+    filter: blur(20px);
+    z-index: -1;
+
+}
+
+/* Using ::before for some cloud-like haze in light mode */
+[data-theme="light"] body::before {
+    content: "";
+    position: fixed;
+    top: 20%;
+    left: 10%;
+    width: 200px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50px;
+    filter: blur(30px);
+    box-shadow:
+        30vw 10vh 0 20px rgba(255, 255, 255, 0.3),
+        -20vw 40vh 0 40px rgba(255, 255, 255, 0.2);
+    z-index: -2;
+
+}
+
+@keyframes zoomStars {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@keyframes pulseGlow {
+    from {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+}
+
+@keyframes sunPulse {
+    from {
+        opacity: 0.8;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+}
+
+@keyframes floatClouds {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(50px);
+    }
+}
+
+/* Container for the content */
+body>* {
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    text-shadow: var(--text-shadow);
+    transition: color var(--transition-speed);
+}
+
+body {
+    font-size: 1.5rem;
+    line-height: 1.6;
+}
+
+/* Wrapper for the question text */
+.question-text {
+    background: var(--glass-bg);
+    padding: 1rem 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    margin-bottom: 2rem;
+    display: inline-block;
+    color: var(--text-color);
+    transition: background var(--transition-speed), color var(--transition-speed);
+}
+
+/* Glassmorphism Form Styles */
+form {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    padding: 2.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    transition: background var(--transition-speed);
+}
+
+input.myinput {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--input-border);
+    background: var(--input-bg);
+    color: var(--input-text);
+    border-radius: 12px;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+    outline: none;
+}
+
+input.myinput::placeholder {
+    color: var(--input-placeholder);
+}
+
+input.myinput:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+    /* Keep slight focus glow consistent but maybe adjust color? */
+}
+
+button[type="submit"] {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+button[type="submit"]:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+button[type="submit"]:active {
+    transform: translateY(0);
+}
+
+/* Alert Styling */
+.alert {
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    font-weight: 700;
+    margin-bottom: 2rem;
+    border: none;
+    box-shadow: var(--card-shadow);
+}
+
+/* Message Container replacement for Bootstrap */
+.message-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.alert-success {
+    background-color: var(--success-bg);
+    color: var(--success-text);
+    animation: popSuccess 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+.alert-danger {
+    background-color: var(--error-bg);
+    color: var(--error-text);
+    animation: shakeError 0.5s ease-in-out both;
+}
+
+.alert-warning {
+    background-color: var(--warning-bg);
+    color: var(--warning-text);
+    animation: fadeIn 0.5s ease-in both;
+}
+
+.fade-out {
+    animation: fadeOut 0.3s forwards;
+}
+
+/* Emoji Particle Styles */
+.emoji-particle {
+    position: fixed;
+    top: -10vh;
+    font-size: 2.5rem;
+    pointer-events: none;
+    z-index: 100;
+    /* Glow only in dark mode ideally, but okay to have always */
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+    animation: fall linear forwards;
+}
+
+/* Keyframes (Same as before) */
+@keyframes fall {
+    to {
+        transform: translateY(110vh) rotate(720deg);
+    }
+}
+
+@keyframes popSuccess {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes shakeError {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-6px) rotate(-2deg);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(6px) rotate(2deg);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.5rem;
+    z-index: 100;
+    transition: transform 0.3s;
+    backdrop-filter: blur(5px);
+}
+
+.theme-toggle:hover {
+    transform: rotate(15deg) scale(1.1);
+}
+
+/* --- New Game UI --- */
+
+/* Override form layout for the grid */
+form.choices-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+/* Choice Buttons */
+button.choice-btn {
+    width: 100%;
+    background: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--input-border);
+    padding: 1rem;
+    border-radius: 16px;
+    font-size: 2.5rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1.5/1;
+    /* Slightly rectangular */
+    text-transform: none;
+    /* Override uppercase */
+    letter-spacing: normal;
+}
+
+button.choice-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-5px) scale(1.02);
+    border-color: transparent;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+button.choice-btn:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+/* --- Scoreboard Styles --- */
+.score-board {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    gap: 1rem;
+    z-index: 100;
+    width: auto;
+    max-width: none;
+}
+
+.score-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 120px;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin: 0;
+    gap: 0;
+}
+
+.score-item.action {
+    /* padding and width inherit from .score-item */
+    background: rgba(255, 255, 255, 0.4);
+    /* Slightly different bg to indicate interactability */
+    cursor: pointer;
+    transition: all 0.3s;
+    /* Ensure content centers */
+    justify-content: center;
+}
+
+.score-item.action:hover {
+    background: rgba(255, 255, 255, 0.6);
+    transform: translateY(-2px) scale(1.05);
+}
+
+.score-item.action:active {
+    transform: translateY(0) scale(0.95);
+}
+
+.score-reset-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s;
+    line-height: 0;
+    color: var(--text-color);
+}
+
+.score-reset-btn:hover {
+    transform: rotate(-180deg);
+}
+
+.score-item:hover {
+    transform: translateY(-2px) scale(1.05);
+}
+
+.score-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    opacity: 0.8;
+    margin-bottom: 0.2rem;
+}
+
+.score-value {
+    font-size: 1.5rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.score-value.fire {
+    color: #f59e0b;
+    /* Amber/Orange for fire */
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.score-value.rank {
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+/* Theme Toggle Button (Restored) */
+.theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.5rem;
+    z-index: 100;
+    transition: transform 0.3s;
+    backdrop-filter: blur(5px);
+}
+
+.theme-toggle:hover {
+    transform: rotate(15deg) scale(1.1);
+}
+
+/* Responsive fix: on very small screens, maybe stack them or shrink them */
+/* Responsive Design: No Scroll / Mobile App View */
+@media (max-width: 768px) {
+
+    html,
+    body {
+        height: 100%;
+        overflow: hidden;
+        /* Lock scroll */
+    }
+
+    body {
+        padding: 60px 10px 10px 10px;
+        /* Top pad for fixed header */
+        justify-content: flex-start;
+        /* Stack from top */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Fixed Header Bar for Scoreboard */
+    .score-board {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 55px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-bottom: 1px solid var(--glass-border);
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        /* Align left */
+        padding: 0 60px 0 10px;
+        /* Right padding for theme toggle */
+        gap: 10px;
+        /* Space between items */
+        margin: 0;
+        z-index: 1000;
+        border-radius: 0;
+        /* Full width bar */
+    }
+
+    .score-item {
+        width: auto;
+        padding: 2px 5px;
+        background: transparent;
+        box-shadow: none;
+        border: none;
+        flex-direction: column;
+        min-width: unset;
+        gap: 0;
+    }
+
+    .score-label {
+        font-size: 0.55rem;
+        display: block;
+        /* Show labels small */
+    }
+
+    .score-value {
+        font-size: 1rem;
+    }
+
+    .score-item.action {
+        margin-left: auto;
+        /* Push reset to the right (before toggle) */
+        width: 40px;
+        height: 100%;
+        background: transparent;
+    }
+
+    /* Theme Toggle Fixed Top Right */
+    .theme-toggle {
+        top: 8px;
+        right: 8px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+        z-index: 1001;
+        border: none;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    /* Game Content Wrapper */
+    #game-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+
+    /* Question Area */
+    .question-text {
+        width: 100%;
+        margin: 0;
+        padding: 1rem;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+        max-height: 20vh;
+        overflow-y: auto;
+    }
+
+    /* Content Form Area */
+    form.choices-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        width: 100%;
+        padding: 10px;
+        margin: 0;
+        border: none;
+        background: transparent;
+        box-shadow: none;
+        flex-grow: 1;
+        /* Fill remaining height */
+        margin-bottom: constant(safe-area-inset-bottom);
+        margin-bottom: env(safe-area-inset-bottom);
+    }
+
+    button.choice-btn {
+        width: 100%;
+        height: 100%;
+        aspect-ratio: unset;
+        font-size: 2.2rem;
+        border-radius: 16px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Messages overlay */
+    .message-container {
+        position: absolute;
+        top: 60px;
+        width: 90%;
+        z-index: 2000;
+        pointer-events: none;
+        /* Let clicks pass through if fading */
+    }
+}
