@@ -48,45 +48,55 @@ if ($request->isPost() && $request->getPost('useranswer') !== null) {
     $token = $request->getPost('token', '');
 
     $pendingAnswers = $session->get('pending_answers');
-    $correctAnswer = $pendingAnswers[$token] ?? '';
 
-    if ($useranswer === '') {
-        $message = '<div class="alert alert-warning">Put something in...</div>';
-        $messageType = 'empty';
-    } elseif ($useranswer == $correctAnswer) {
-        $geniusMessages = [
-            "You are a genius!",
-            "You are a total genius!",
-            "Absolute genius!",
-            "Look at you, what a genius.",
-            "Clearly, you are a genius.",
-            "You are a genius, obviously.",
-            "Pure genius!",
-            "A true genius indeed!",
-            "Behold, a genius!"
-        ];
-        $selectedGenius = $geniusMessages[array_rand($geniusMessages)];
-        $message = '<div class="alert alert-success">' . $selectedGenius . '</div>';
-        $messageType = 'success';
-
-        $scoreManager->recordSuccess();
-    } else {
-        $idiotMessages = [
-            "You are an idiot!",
-            "You are such an idiot!",
-            "Absolute idiot!",
-            "Total idiot move.",
-            "You are an idiot, clearly.",
-            "Don't be such an idiot!",
-            "What an idiot!",
-            "You complete idiot!",
-            "Maximum idiot level reached."
-        ];
-        $selectedIdiot = $idiotMessages[array_rand($idiotMessages)];
-        $message = '<div class="alert alert-danger">' . $selectedIdiot . ' The correct answer was <strong>' . $correctAnswer . '</strong>.</div>';
+    if (!isset($pendingAnswers[$token])) {
+        $message = '<div class="alert alert-warning">This question has already been answered or is invalid.</div>';
         $messageType = 'error';
+    } else {
+        $correctAnswer = $pendingAnswers[$token];
 
-        $scoreManager->recordFailure();
+        // Remove token immediately to prevent replay attacks (Cheating Fix #2)
+        unset($pendingAnswers[$token]);
+        $session->set('pending_answers', $pendingAnswers);
+
+        if ($useranswer === '') {
+            $message = '<div class="alert alert-warning">Put something in...</div>';
+            $messageType = 'empty';
+        } elseif ((string) $useranswer === (string) $correctAnswer) {
+            $geniusMessages = [
+                "You are a genius!",
+                "You are a total genius!",
+                "Absolute genius!",
+                "Look at you, what a genius.",
+                "Clearly, you are a genius.",
+                "You are a genius, obviously.",
+                "Pure genius!",
+                "A true genius indeed!",
+                "Behold, a genius!"
+            ];
+            $selectedGenius = $geniusMessages[array_rand($geniusMessages)];
+            $message = '<div class="alert alert-success">' . $selectedGenius . '</div>';
+            $messageType = 'success';
+
+            $scoreManager->recordSuccess();
+        } else {
+            $idiotMessages = [
+                "You are an idiot!",
+                "You are such an idiot!",
+                "Absolute idiot!",
+                "Total idiot move.",
+                "You are an idiot, clearly.",
+                "Don't be such an idiot!",
+                "What an idiot!",
+                "You complete idiot!",
+                "Maximum idiot level reached."
+            ];
+            $selectedIdiot = $idiotMessages[array_rand($idiotMessages)];
+            $message = '<div class="alert alert-danger">' . $selectedIdiot . ' The correct answer was <strong>' . $correctAnswer . '</strong>.</div>';
+            $messageType = 'error';
+
+            $scoreManager->recordFailure();
+        }
     }
 }
 

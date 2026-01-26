@@ -27,6 +27,9 @@ class ScoreManager
         if (!$this->session->has('streak')) {
             $this->session->set('streak', 0);
         }
+        if (!$this->session->has('highscore')) {
+            $this->session->set('highscore', 0);
+        }
     }
 
     public function getScore()
@@ -88,7 +91,7 @@ class ScoreManager
 
     public function getHighScore()
     {
-        return $this->request->getCookie('highscore', 0);
+        return $this->session->get('highscore', 0);
     }
 
     private function updateHighScore()
@@ -97,8 +100,7 @@ class ScoreManager
         $high = $this->getHighScore();
 
         if ($current > $high) {
-            // Set cookie for 1 year
-            $this->request->setCookie('highscore', $current, time() + (86400 * 365), "/");
+            $this->session->set('highscore', $current);
         }
     }
 }
