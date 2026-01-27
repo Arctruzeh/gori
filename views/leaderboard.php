@@ -56,53 +56,53 @@
         <span id="theme-icon">☀️</span>
     </button>
 
-    <div style="position: absolute; top: 20px; right: 80px; font-family: sans-serif; z-index: 99;">
-        <a href="/" style="margin-right: 15px; text-decoration: none; color: inherit; font-weight: bold;">🏠 Home</a>
+    <div class="nav-header">
+        <a href="/" class="nav-link">🏠 Home</a>
         <?php if (isset($_SESSION['user_id'])): ?>
-            <a href="/?action=profile"
-                style="margin-right: 15px; text-decoration: none; color: inherit; font-weight: bold;">👤 Profile</a>
-            <a href="/?action=logout" style="text-decoration: none; color: inherit; font-weight: bold;">Logout</a>
+            <a href="/?action=profile" class="nav-link">👤 Profile</a>
+            <a href="/?action=logout" class="nav-link">Logout</a>
         <?php else: ?>
-            <a href="/?action=login"
-                style="margin-right: 10px; text-decoration: none; color: inherit; font-weight: bold;">Login</a>
+            <a href="/?action=login" class="nav-link">Login</a>
         <?php endif; ?>
     </div>
 
-    <div class="nb-box" style="padding: 2rem; max-width: 800px; margin: 0 auto; text-align: left;">
+    <div class="nb-box leaderboard-box">
         <h2 style="text-align: center; margin-bottom: 2rem;">🏆 Leaderboard</h2>
 
         <?php if (empty($highScores)): ?>
             <p style="text-align: center;">No scores yet. Be the first!</p>
         <?php else: ?>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Player</th>
-                        <th>Score</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php $rank = 1;
-                    foreach ($highScores as $score): ?>
+            <div class="table-container">
+                <table>
+                    <thead>
                         <tr>
-                            <td style="font-weight: bold;">
-                                <?php echo $rank++; ?>
-                            </td>
-                            <td>
-                                <?php echo htmlspecialchars($score['username']); ?>
-                            </td>
-                            <td style="font-weight: bold;">
-                                <?php echo $score['score']; ?>
-                            </td>
-                            <td style="font-size: 0.9em;">
-                                <?php echo date('M j, Y', strtotime($score['created_at'])); ?>
-                            </td>
+                            <th>Rank</th>
+                            <th>Player</th>
+                            <th>Score</th>
+                            <th>Date</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php $rank = 1;
+                        foreach ($highScores as $score): ?>
+                            <tr>
+                                <td style="font-weight: bold;">
+                                    <?php echo $rank++; ?>
+                                </td>
+                                <td>
+                                    <?php echo htmlspecialchars($score['username']); ?>
+                                </td>
+                                <td style="font-weight: bold;">
+                                    <?php echo $score['score']; ?>
+                                </td>
+                                <td style="font-size: 0.9em;">
+                                    <?php echo date('M j, Y', strtotime($score['created_at'])); ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         <?php endif; ?>
     </div>
 

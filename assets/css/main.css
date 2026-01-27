@@ -366,6 +366,42 @@ button.choice-btn:active {
 
 
 
+/* Navigation Header Standard */
+.nav-header {
+    position: absolute;
+    top: 20px;
+    right: 80px;
+    font-family: sans-serif;
+    z-index: 99;
+}
+
+.nav-link {
+    margin-right: 15px;
+    text-decoration: none;
+    color: inherit;
+    font-weight: bold;
+}
+
+.nav-link:last-child {
+    margin-right: 0;
+}
+
+/* Leaderboard Box */
+.leaderboard-box {
+    padding: 2rem;
+    max-width: 800px;
+    margin: 4rem auto 2rem;
+    /* Added top margin to not overlap with nav */
+    text-align: left;
+}
+
+/* Responsive Table */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 /* MOBILE RESPONSIVE */
 @media (max-width: 768px) {
     body {
@@ -451,5 +487,25 @@ button.choice-btn:active {
         aspect-ratio: unset;
         height: 100%;
         /* Fill grid cells */
+    }
+
+    /* Leaderboard Mobile */
+    .nav-header {
+        position: static;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 5rem;
+        /* Push down below fixed header/toggle if any */
+        margin-bottom: 1rem;
+        padding: 0 1rem;
+    }
+
+    .leaderboard-box {
+        margin: 0 1rem !important;
+        /* Override inline style margin if needed, but we will move it to class */
+        padding: 1rem !important;
+        width: auto !important;
     }
 }
