@@ -25,13 +25,12 @@
         <span id="theme-icon">☀️</span>
     </button>
 
-    <div style="position: absolute; top: 20px; right: 80px; font-family: sans-serif; z-index: 99;">
-        <a href="/" style="margin-right: 15px; text-decoration: none; color: inherit; font-weight: bold;">🏠 Home</a>
-        <a href="/?action=leaderboard" style="text-decoration: none; color: inherit; font-weight: bold;">🏆
-            Leaderboard</a>
+    <div class="nav-header">
+        <a href="/" class="nav-link">🏠 Home</a>
+        <a href="/?action=leaderboard" class="nav-link">🏆 Leaderboard</a>
     </div>
 
-    <div class="nb-box" style="padding: 2rem; max-width: 400px; margin: 0 auto; text-align: left;">
+    <div class="nb-box auth-box">
         <h2 style="text-align: center; margin-bottom: 2rem;">Login</h2>
 
         <?php if (!empty($error)): ?>
@@ -48,25 +47,21 @@
         <?php endif; ?>
 
         <form action="/?action=do_login" method="POST">
-            <div style="margin-bottom: 1rem;">
-                <label for="username" style="display: block; font-weight: bold; margin-bottom: 0.5rem;">Username</label>
-                <input type="text" id="username" name="username" required
-                    style="width: 100%; padding: 0.5rem; border: var(--border-width) solid var(--border-color); border-radius: var(--border-radius); background: var(--input-bg); color: var(--text-color); font-size: 1rem;">
+            <div class="form-group">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" id="username" name="username" required class="form-input">
             </div>
 
-            <div style="margin-bottom: 1.5rem;">
-                <label for="password" style="display: block; font-weight: bold; margin-bottom: 0.5rem;">Password</label>
-                <input type="password" id="password" name="password" required
-                    style="width: 100%; padding: 0.5rem; border: var(--border-width) solid var(--border-color); border-radius: var(--border-radius); background: var(--input-bg); color: var(--text-color); font-size: 1rem;">
+            <div class="form-group last">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" required class="form-input">
             </div>
 
-            <button type="submit" class="choice-btn"
-                style="width: 100%; font-size: 1.5rem; aspect-ratio: unset; padding: 0.5rem;">Login</button>
+            <button type="submit" class="choice-btn auth-btn">Login</button>
         </form>
 
-        <div style="text-align: center; margin-top: 1.5rem;">
-            <p>Don't have an account? <a href="/?action=register"
-                    style="color: var(--primary-color); font-weight: bold;">Register</a></p>
+        <div class="auth-link-container">
+            <p>Don't have an account? <a href="/?action=register" class="auth-link">Register</a></p>
         </div>
     </div>
 

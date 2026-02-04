@@ -18,29 +18,7 @@
             document.documentElement.setAttribute('data-theme', theme);
         })();
     </script>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
 
-        th,
-        td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: var(--border-width) solid var(--border-color);
-        }
-
-        th {
-            background-color: var(--primary-color);
-            color: #fff;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-    </style>
 </head>
 
 <body>
@@ -48,14 +26,13 @@
         <span id="theme-icon">☀️</span>
     </button>
 
-    <div style="position: absolute; top: 20px; right: 80px; font-family: sans-serif; z-index: 99;">
-        <a href="/" style="margin-right: 15px; text-decoration: none; color: inherit; font-weight: bold;">🏠 Home</a>
-        <a href="/?action=leaderboard"
-            style="margin-right: 15px; text-decoration: none; color: inherit; font-weight: bold;">🏆 Leaderboard</a>
-        <a href="/?action=logout" style="text-decoration: none; color: inherit; font-weight: bold;">Logout</a>
+    <div class="nav-header">
+        <a href="/" class="nav-link">🏠 Home</a>
+        <a href="/?action=leaderboard" class="nav-link">🏆 Leaderboard</a>
+        <a href="/?action=logout" class="nav-link">Logout</a>
     </div>
 
-    <div class="nb-box" style="padding: 2rem; max-width: 800px; margin: 0 auto; text-align: left;">
+    <div class="leaderboard-box">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
             <h2 style="margin: 0;">👤
                 <?php echo htmlspecialchars($user['username']); ?>
@@ -82,28 +59,30 @@
 
         <h3>Recent Scores</h3>
         <?php if (empty($recentScores)): ?>
-            <p>No games played yet. <a href="/">Play now!</a></p>
+            <p>No games played yet. <a href="/" class="btn-small">Play now!</a></p>
         <?php else: ?>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Score</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($recentScores as $score): ?>
+            <div class="table-container">
+                <table>
+                    <thead>
                         <tr>
-                            <td style="font-weight: bold;">
-                                <?php echo $score['score']; ?>
-                            </td>
-                            <td>
-                                <?php echo date('M j, Y h:i A', strtotime($score['created_at'])); ?>
-                            </td>
+                            <th>Score</th>
+                            <th>Date</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($recentScores as $score): ?>
+                            <tr>
+                                <td style="font-weight: bold;">
+                                    <?php echo $score['score']; ?>
+                                </td>
+                                <td>
+                                    <?php echo date('M j, Y h:i A', strtotime($score['created_at'])); ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         <?php endif; ?>
     </div>
 

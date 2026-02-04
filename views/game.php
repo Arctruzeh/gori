@@ -29,59 +29,76 @@
 
 <body>
 
-    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme">
-        <span id="theme-icon">☀️</span>
-    </button>
+    <header class="game-header">
+        <div class="score-board">
+            <div class="score-item">
+                <span class="score-label">SCORE</span>
+                <span class="score-value">
+                    <?php echo $score; ?>
+                </span>
+            </div>
 
-    <div style="position: absolute; top: 20px; right: 80px; font-family: sans-serif; z-index: 99;">
-        <a href="/?action=leaderboard" style="margin-right: 15px; text-decoration: none; color: inherit;">🏆
-            Leaderboard</a>
-        <?php if ($isLoggedIn): ?>
-            <a href="/?action=profile" style="margin-right: 15px; text-decoration: none; color: inherit;">👤
-                <?php echo htmlspecialchars($username); ?></a>
-            <a href="/?action=logout" style="text-decoration: none; color: inherit;">Logout</a>
-        <?php else: ?>
-            <a href="/?action=login" style="margin-right: 10px; text-decoration: none; color: inherit;">Login</a>
-            <a href="/?action=register" style="text-decoration: none; color: inherit;">Register</a>
-        <?php endif; ?>
-    </div>
+            <div class="score-item">
+                <span class="score-label">BEST</span>
+                <span class="score-value">
+                    <?php echo $bestScore; ?>
+                </span>
+            </div>
 
-    <div class="score-board">
-        <div class="score-item">
-            <span class="score-label">SCORE</span>
-            <span class="score-value">
-                <?php echo $score; ?>
-            </span>
+            <div class="score-item">
+                <span class="score-label">RANK</span>
+                <span class="score-value rank">
+                    <?php echo $rank; ?>
+                </span>
+            </div>
+
+            <div class="score-item">
+                <span class="score-label">STREAK</span>
+                <span class="score-value fire">
+                    <?php echo $streak > 0 ? "🔥 $streak" : '0'; ?>
+                </span>
+            </div>
+
+            <form action="" method="POST" class="score-item action" aria-label="Reset Score">
+                <input type="hidden" name="action" value="reset">
+                <button type="submit" class="score-reset-btn" title="Reset Score">
+                    🔄
+                </button>
+            </form>
         </div>
 
-        <div class="score-item">
-            <span class="score-label">BEST</span>
-            <span class="score-value">
-                <?php echo $bestScore; ?>
-            </span>
-        </div>
+        <div class="header-right">
+            <nav class="main-nav">
+                <a href="/?action=leaderboard" class="nav-link" title="Leaderboard">
+                    <span class="nav-icon">🏆</span>
+                    <span class="nav-text">Leaderboard</span>
+                </a>
+                <?php if ($isLoggedIn): ?>
+                    <a href="/?action=profile" class="nav-link" title="Profile">
+                        <span class="nav-icon">👤</span>
+                        <span class="nav-text">Profile</span>
+                    </a>
+                    <a href="/?action=logout" class="nav-link" title="Logout">
+                        <span class="nav-icon">👋</span>
+                        <span class="nav-text">Logout</span>
+                    </a>
+                <?php else: ?>
+                    <a href="/?action=login" class="nav-link" title="Login">
+                        <span class="nav-icon">🔑</span>
+                        <span class="nav-text">Login</span>
+                    </a>
+                    <a href="/?action=register" class="nav-link" title="Register">
+                        <span class="nav-icon">📝</span>
+                        <span class="nav-text">Register</span>
+                    </a>
+                <?php endif; ?>
+            </nav>
 
-        <div class="score-item">
-            <span class="score-label">RANK</span>
-            <span class="score-value rank">
-                <?php echo $rank; ?>
-            </span>
-        </div>
-
-        <div class="score-item">
-            <span class="score-label">STREAK</span>
-            <span class="score-value fire">
-                <?php echo $streak > 0 ? "🔥 $streak" : '0'; ?>
-            </span>
-        </div>
-
-        <form action="" method="POST" class="score-item action" aria-label="Reset Score">
-            <input type="hidden" name="action" value="reset">
-            <button type="submit" class="score-reset-btn" title="Reset Score">
-                🔄
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme">
+                <span id="theme-icon">☀️</span>
             </button>
-        </form>
-    </div>
+        </div>
+    </header>
 
     <?php if ($message): ?>
         <div class="message-container" id="message-container">
