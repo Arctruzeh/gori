@@ -16,6 +16,29 @@ final class Response
     ) {
     }
 
+    public function statusCode(): int
+    {
+        return $this->statusCode;
+    }
+
+    public function content(): string
+    {
+        return $this->content;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function headers(): array
+    {
+        return $this->headers;
+    }
+
+    public function header(string $name): ?string
+    {
+        return $this->headers[$name] ?? null;
+    }
+
     public function send(): void
     {
         \http_response_code($this->statusCode);

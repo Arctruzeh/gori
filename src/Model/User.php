@@ -7,7 +7,7 @@ namespace App\Model;
 use PDO;
 use PDOException;
 
-final class User
+final class User implements UserRepositoryInterface
 {
     public function __construct(
         private readonly PDO $pdo,

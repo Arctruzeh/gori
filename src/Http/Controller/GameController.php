@@ -6,10 +6,12 @@ namespace App\Http\Controller;
 
 use App\Domain\Feedback;
 use App\Domain\Game;
+use App\Domain\NativeRandomizer;
+use App\Domain\RandomizerInterface;
 use App\Domain\ScoreManager;
 use App\Http\Request;
 use App\Http\Response;
-use App\Http\Session;
+use App\Http\SessionInterface;
 use App\View\Renderer;
 
 final class GameController
@@ -38,13 +40,25 @@ final class GameController
         'Maximum idiot level reached.',
     ];
 
+    private readonly RandomizerInterface $randomizer;
+
+    /** @var callable(): string */
+    private $tokenGenerator;
+
+    /**
+     * @param (callable(): string)|null $tokenGenerator
+     */
     public function __construct(
-        private readonly Session $session,
+        private readonly SessionInterface $session,
         private readonly Request $request,
         private readonly Game $game,
         private readonly ScoreManager $scoreManager,
         private readonly Renderer $renderer,
+        ?RandomizerInterface $randomizer = null,
+        ?callable $tokenGenerator = null,
     ) {
+        $this->randomizer = $randomizer ?? new NativeRandomizer();
+        $this->tokenGenerator = $tokenGenerator ?? static fn (): string => \bin2hex(\random_bytes(16));
     }
 
     public function index(): Response
@@ -68,7 +82,7 @@ final class GameController
 
         $question = $this->game->generateQuestion();
 
-        $token = \uniqid('', true);
+        $token = ($this->tokenGenerator)();
         /** @var array<string, int> $pendingAnswers */
         $pendingAnswers = (array) $this->session->get('pending_answers', []);
         $pendingAnswers[$token] = $question->answer;
@@ -117,13 +131,12 @@ final class GameController
 
         if ($userAnswer === (string) $correctAnswer) {
             $this->scoreManager->recordSuccess();
-            return Feedback::success(self::GENIUS_MESSAGES[\array_rand(self::GENIUS_MESSAGES)]);
+            $message = self::GENIUS_MESSAGES[$this->randomizer->pickIndex(\count(self::GENIUS_MESSAGES))];
+            return Feedback::success($message);
         }
 
         $this->scoreManager->recordFailure();
-        return Feedback::danger(
-            self::IDIOT_MESSAGES[\array_rand(self::IDIOT_MESSAGES)],
-            $correctAnswer
-        );
+        $message = self::IDIOT_MESSAGES[$this->randomizer->pickIndex(\count(self::IDIOT_MESSAGES))];
+        return Feedback::danger($message, $correctAnswer);
     }
 }

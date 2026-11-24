@@ -6,18 +6,18 @@ namespace App\Http\Controller;
 
 use App\Domain\Rank;
 use App\Http\Response;
-use App\Http\Session;
-use App\Model\Score;
-use App\Model\User;
+use App\Http\SessionInterface;
+use App\Model\ScoreRepositoryInterface;
+use App\Model\UserRepositoryInterface;
 use App\View\Renderer;
 
 final class ProfileController
 {
     public function __construct(
-        private readonly Session $session,
+        private readonly SessionInterface $session,
         private readonly Renderer $renderer,
-        private readonly User $userModel,
-        private readonly Score $scoreModel,
+        private readonly UserRepositoryInterface $userModel,
+        private readonly ScoreRepositoryInterface $scoreModel,
     ) {
     }
 

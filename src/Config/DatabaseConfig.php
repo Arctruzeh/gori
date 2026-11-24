@@ -15,19 +15,31 @@ final class DatabaseConfig
     ) {
     }
 
-    public static function fromEnvironment(): self
+    /**
+     * @param array<string, mixed>|null $env Optional map for deterministic unit testing.
+     */
+    public static function fromEnvironment(?array $env = null): self
     {
-        $databaseUrl = \getenv('DATABASE_URL') ?: ($_ENV['DATABASE_URL'] ?? null);
+        $databaseUrl = null;
+        if ($env !== null) {
+            $raw = $env['DATABASE_URL'] ?? null;
+            $databaseUrl = \is_string($raw) ? $raw : null;
+        } else {
+            $raw = \getenv('DATABASE_URL') ?: ($_ENV['DATABASE_URL'] ?? null);
+            $databaseUrl = \is_string($raw) ? $raw : null;
+        }
 
-        if (\is_string($databaseUrl) && $databaseUrl !== '') {
+        if ($databaseUrl !== null && $databaseUrl !== '') {
             $parsed = \parse_url($databaseUrl);
             if (\is_array($parsed) && isset($parsed['host'], $parsed['user'])) {
+                $dbname = \ltrim((string) ($parsed['path'] ?? ''), '/');
+
                 return new self(
                     host: (string) $parsed['host'],
                     port: isset($parsed['port']) ? (string) $parsed['port'] : '5432',
-                    dbname: \ltrim((string) ($parsed['path'] ?? 'gori'), '/'),
-                    user: (string) $parsed['user'],
-                    password: (string) ($parsed['pass'] ?? ''),
+                    dbname: $dbname !== '' ? $dbname : 'gori',
+                    user: \rawurldecode((string) $parsed['user']),
+                    password: isset($parsed['pass']) ? \rawurldecode((string) $parsed['pass']) : '',
                 );
             }
         }

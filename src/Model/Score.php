@@ -6,7 +6,7 @@ namespace App\Model;
 
 use PDO;
 
-final class Score
+final class Score implements ScoreRepositoryInterface
 {
     public function __construct(
         private readonly PDO $pdo,

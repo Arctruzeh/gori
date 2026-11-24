@@ -6,17 +6,17 @@ namespace App\Http\Controller;
 
 use App\Http\Request;
 use App\Http\Response;
-use App\Http\Session;
-use App\Model\User;
+use App\Http\SessionInterface;
+use App\Model\UserRepositoryInterface;
 use App\View\Renderer;
 
 final class AuthController
 {
     public function __construct(
-        private readonly Session $session,
+        private readonly SessionInterface $session,
         private readonly Request $request,
         private readonly Renderer $renderer,
-        private readonly User $userModel,
+        private readonly UserRepositoryInterface $userModel,
     ) {
     }
 
@@ -35,13 +35,14 @@ final class AuthController
 
     public function login(): Response
     {
-        $username = (string) $this->request->input('username', '');
+        $username = \trim((string) $this->request->input('username', ''));
         $password = (string) $this->request->input('password', '');
 
         $user = $this->userModel->findByUsername($username);
 
         if ($user !== null && $this->userModel->verifyPassword($password, (string) $user['password_hash'])) {
             $this->clearGameSessionState();
+            $this->session->regenerateId(true);
             $this->session->set('user_id', (int) $user['id']);
             $this->session->set('username', (string) $user['username']);
             return Response::redirect('/');
@@ -65,7 +66,7 @@ final class AuthController
 
     public function register(): Response
     {
-        $username = (string) $this->request->input('username', '');
+        $username = \trim((string) $this->request->input('username', ''));
         $password = (string) $this->request->input('password', '');
 
         if ($username === '' || $password === '') {

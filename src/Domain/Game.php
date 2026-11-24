@@ -8,19 +8,21 @@ use InvalidArgumentException;
 
 final class Game
 {
-    /** @var Creature[] */
+    /** @var list<Creature> */
     private readonly array $creatures;
 
-    /** @var BodyPart[] */
+    /** @var list<BodyPart> */
     private readonly array $parts;
 
-    /** @var int[] */
+    /** @var list<int> */
     private array $possibleAnswers = [];
+
+    private readonly RandomizerInterface $randomizer;
 
     /**
      * @param Creature[] $creatures
      */
-    public function __construct(array $creatures)
+    public function __construct(array $creatures, ?RandomizerInterface $randomizer = null)
     {
         if ($creatures === []) {
             throw new InvalidArgumentException('Game requires at least one creature.');
@@ -28,6 +30,7 @@ final class Game
 
         $this->creatures = \array_values($creatures);
         $this->parts = BodyPart::cases();
+        $this->randomizer = $randomizer ?? new NativeRandomizer();
 
         foreach ($this->creatures as $creature) {
             foreach ($this->parts as $part) {
@@ -43,14 +46,13 @@ final class Game
 
     public function generateQuestion(): Question
     {
-        $randomCreature = $this->creatures[\array_rand($this->creatures)];
-        $randomPart = $this->parts[\array_rand($this->parts)];
+        $randomCreature = $this->creatures[$this->randomizer->pickIndex(\count($this->creatures))];
+        $randomPart = $this->parts[$this->randomizer->pickIndex(\count($this->parts))];
 
         $trueAnswer = $randomCreature->getPartCount($randomPart);
         $choices = [$trueAnswer];
 
-        $pool = $this->possibleAnswers;
-        \shuffle($pool);
+        $pool = $this->randomizer->shuffle($this->possibleAnswers);
 
         foreach ($pool as $option) {
             if (\count($choices) >= 4) {
@@ -61,7 +63,7 @@ final class Game
             }
         }
 
-        \shuffle($choices);
+        $choices = $this->randomizer->shuffle($choices);
 
         $name = $randomCreature->getName();
         $displayName = $randomPart->label();
@@ -74,7 +76,7 @@ final class Game
         ];
 
         return new Question(
-            text: $templates[\array_rand($templates)],
+            text: $templates[$this->randomizer->pickIndex(\count($templates))],
             answer: $trueAnswer,
             choices: $choices,
         );
