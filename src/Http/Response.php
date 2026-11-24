@@ -1,32 +1,33 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http;
 
-class Response
+final class Response
 {
-    private $content;
-    private $statusCode;
-    private $headers;
-
-    public function __construct($content = '', $statusCode = 200, $headers = [])
-    {
-        $this->content = $content;
-        $this->statusCode = $statusCode;
-        $this->headers = $headers;
+    /**
+     * @param array<string, string> $headers
+     */
+    public function __construct(
+        private readonly string $content = '',
+        private readonly int $statusCode = 200,
+        private readonly array $headers = [],
+    ) {
     }
 
-    public function send()
+    public function send(): void
     {
         \http_response_code($this->statusCode);
 
         foreach ($this->headers as $name => $value) {
-            \header("$name: $value");
+            \header("{$name}: {$value}");
         }
 
         echo $this->content;
     }
 
-    public static function redirect($url): self
+    public static function redirect(string $url): self
     {
         return new self('', 302, ['Location' => $url]);
     }

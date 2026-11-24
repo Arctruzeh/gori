@@ -1,117 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Profile - Genius or Idiot</title>
-    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
-    <link rel="stylesheet" href="/assets/css/main.css">
-    <script>
-        (function () {
-            const savedTheme = localStorage.getItem('theme');
-            const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            let theme = 'light';
-            if (savedTheme) theme = savedTheme;
-            else if (systemDark) theme = 'dark';
-            document.documentElement.setAttribute('data-theme', theme);
-        })();
-    </script>
-
-</head>
-
-<body>
-    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Theme">
-        <span id="theme-icon">☀️</span>
-    </button>
-
-    <div class="nav-header">
-        <a href="/" class="nav-link">🏠 Home</a>
-        <a href="/?action=leaderboard" class="nav-link">🏆 Leaderboard</a>
-        <a href="/?action=logout" class="nav-link">Logout</a>
+<div class="nb-box leaderboard-box">
+    <div class="profile-header">
+        <h2 class="profile-username">👤 <?php echo \htmlspecialchars((string) $user['username'], ENT_QUOTES, 'UTF-8'); ?></h2>
+        <div class="score-value profile-rank">
+            <?php echo \htmlspecialchars((string) $rank, ENT_QUOTES, 'UTF-8'); ?>
+        </div>
     </div>
 
-    <div class="leaderboard-box">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
-            <h2 style="margin: 0;">👤
-                <?php echo htmlspecialchars($user['username']); ?>
-            </h2>
-            <div class="score-value">
-                <?php echo $rank; ?>
-            </div>
+    <div class="profile-stats">
+        <div class="profile-stat-card">
+            <span class="score-label">BEST SCORE</span>
+            <span class="score-value"><?php echo (int) $bestScore; ?></span>
         </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
-            <div class="score-item" style="width: 100%;">
-                <span class="score-label">BEST SCORE</span>
-                <span class="score-value">
-                    <?php echo $bestScore; ?>
-                </span>
-            </div>
-            <div class="score-item" style="width: 100%;">
-                <span class="score-label">JOINED</span>
-                <span class="score-value" style="font-size: 1.2rem;">
-                    <?php echo date('M Y', strtotime($user['created_at'])); ?>
-                </span>
-            </div>
+        <div class="profile-stat-card">
+            <span class="score-label">JOINED</span>
+            <span class="score-value profile-joined">
+                <?php echo \date('M Y', \strtotime((string) $user['created_at'])); ?>
+            </span>
         </div>
+    </div>
 
-        <h3>Recent Scores</h3>
-        <?php if (empty($recentScores)): ?>
-            <p>No games played yet. <a href="/" class="btn-small">Play now!</a></p>
-        <?php else: ?>
-            <div class="table-container">
-                <table>
-                    <thead>
+    <h3 class="section-subtitle">Recent Scores</h3>
+    <?php if (empty($recentScores)): ?>
+        <div class="empty-state">
+            <p>No games played yet.</p>
+            <a href="/" class="btn-small">Play now!</a>
+        </div>
+    <?php else: ?>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Score</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($recentScores as $scoreRow): ?>
                         <tr>
-                            <th>Score</th>
-                            <th>Date</th>
+                            <td class="cell-strong">
+                                <?php echo (int) $scoreRow['score']; ?>
+                            </td>
+                            <td>
+                                <?php echo \date('M j, Y h:i A', \strtotime((string) $scoreRow['created_at'])); ?>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($recentScores as $score): ?>
-                            <tr>
-                                <td style="font-weight: bold;">
-                                    <?php echo $score['score']; ?>
-                                </td>
-                                <td>
-                                    <?php echo date('M j, Y h:i A', strtotime($score['created_at'])); ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        <?php endif; ?>
-    </div>
-
-    <script>
-        const toggleBtn = document.getElementById('theme-toggle');
-        const themeIcon = document.getElementById('theme-icon');
-        const html = document.documentElement;
-        function updateIcon(theme) { themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️'; }
-        updateIcon(html.getAttribute('data-theme'));
-        toggleBtn.addEventListener('click', () => {
-            const current = html.getAttribute('data-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
-            updateIcon(next);
-        });
-    </script>
-    <script data-slug="g-or-i">
-        (function() {
-            var slug = document.currentScript.getAttribute('data-slug');
-            var link = document.createElement('a');
-            link.href = 'https://ajlato.com/projects/' + slug;
-            link.innerHTML = '← Back to Portfolio';
-            link.style.cssText = 'position: fixed; bottom: 20px; right: 20px; background: #222; color: #fff; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-family: system-ui, sans-serif; font-size: 14px; z-index: 10000; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: transform 0.2s;';
-            link.onmouseover = function() { link.style.transform = 'scale(1.05)'; };
-            link.onmouseout = function() { link.style.transform = 'scale(1)'; };
-            document.body.appendChild(link);
-        })();
-    </script>
-</body>
-
-</html>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+</div>

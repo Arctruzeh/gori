@@ -1,15 +1,33 @@
 services:
-  db:
-    image: postgres:15-alpine
-    container_name: gori_db
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: gori_app
     ports:
-      - "5432:5432"
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgres://postgres:password@db:5432/gori
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:19-alpine
+    container_name: gori_db
     environment:
       POSTGRES_DB: gori
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U postgres -d gori"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
 
 volumes:
   db_data:

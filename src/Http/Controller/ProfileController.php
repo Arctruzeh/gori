@@ -1,69 +1,65 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controller;
 
-use App\Http\Request;
+use App\Domain\Rank;
 use App\Http\Response;
 use App\Http\Session;
 use App\Model\Score;
 use App\Model\User;
 use App\View\Renderer;
 
-class ProfileController
+final class ProfileController
 {
-    private $session;
-    private $renderer;
-    private $scoreModel;
-    private $userModel;
-
-    public function __construct(Session $session, Renderer $renderer)
-    {
-        $this->session = $session;
-        $this->renderer = $renderer;
-        $this->scoreModel = new Score();
-        $this->userModel = new User();
+    public function __construct(
+        private readonly Session $session,
+        private readonly Renderer $renderer,
+        private readonly User $userModel,
+        private readonly Score $scoreModel,
+    ) {
     }
 
-    public function index()
+    public function index(): Response
     {
         $userId = $this->session->get('user_id');
-        if (!$userId) {
-            return new Response('', 302, ['Location' => '/?action=login']);
+        if ($userId === null) {
+            return Response::redirect('/?action=login');
         }
 
-        $user = $this->userModel->findById($userId);
-        $recentScores = $this->scoreModel->getUserHighScores($userId);
-        $bestScore = $this->scoreModel->getUserBestScore($userId);
-        $rank = $this->getRank($bestScore);
+        $user = $this->userModel->findById((int) $userId);
+        if ($user === null) {
+            return Response::redirect('/?action=logout');
+        }
 
-        return new Response($this->renderer->render('profile', [
+        $recentScores = $this->scoreModel->getUserRecentScores((int) $userId);
+        $bestScore = $this->scoreModel->getUserBestScore((int) $userId);
+        $rank = Rank::forScore($bestScore);
+
+        return new Response($this->renderer->renderWithLayout('profile', [
             'user' => $user,
             'recentScores' => $recentScores,
             'bestScore' => $bestScore,
-            'rank' => $rank
+            'rank' => $rank,
+            'isLoggedIn' => true,
+            'username' => (string) $user['username'],
+            'currentAction' => 'profile',
+            'pageTitle' => 'Profile - Genius or Idiot',
+            'layoutSize' => 'wide',
         ]));
     }
 
-    public function leaderboard()
+    public function leaderboard(): Response
     {
         $highScores = $this->scoreModel->getHighScores(20);
-        return new Response($this->renderer->render('leaderboard', ['highScores' => $highScores]));
-    }
-
-    private function getRank($score)
-    {
-        if ($score >= 1000)
-            return '🦖 Kaiju';
-        if ($score >= 500)
-            return '👾 Monster';
-        if ($score >= 250)
-            return '🦍 Beast';
-        if ($score >= 100)
-            return '🦁 Predator';
-        if ($score >= 50)
-            return '🦊 Hunter';
-        if ($score >= 10)
-            return '🐣 Hatchling';
-        return '🥚 Egg';
+        return new Response($this->renderer->renderWithLayout('leaderboard', [
+            'highScores' => $highScores,
+            'isLoggedIn' => $this->session->has('user_id'),
+            'username' => $this->session->get('username'),
+            'currentAction' => 'leaderboard',
+            'pageTitle' => 'Leaderboard - Genius or Idiot',
+            'layoutSize' => 'wide',
+        ]));
     }
 }

@@ -1,39 +1,60 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http;
 
 /**
  * Request Class
- * Wraps PHP's $_POST, $_GET, $_SERVER and $_COOKIE for OOP access.
+ * Captures immutable HTTP request data for OOP access.
  */
-class Request
+final class Request
 {
-    public function getPost(string $key, $default = null)
-    {
-        return $_POST[$key] ?? $default;
+    public function __construct(
+        private readonly array $query = [],
+        private readonly array $post = [],
+        private readonly array $cookies = [],
+        private readonly array $server = [],
+    ) {
     }
 
-    public function getQuery(string $key, $default = null)
+    public static function fromGlobals(): self
     {
-        return $_GET[$key] ?? $default;
+        return new self(
+            query: $_GET,
+            post: $_POST,
+            cookies: $_COOKIE,
+            server: $_SERVER,
+        );
     }
 
-    public function getCookie(string $key, $default = null)
+    public function getPost(string $key, mixed $default = null): mixed
     {
-        return $_COOKIE[$key] ?? $default;
+        return $this->post[$key] ?? $default;
+    }
+
+    public function getQuery(string $key, mixed $default = null): mixed
+    {
+        return $this->query[$key] ?? $default;
+    }
+
+    public function getCookie(string $key, mixed $default = null): mixed
+    {
+        return $this->cookies[$key] ?? $default;
     }
 
     public function isPost(): bool
     {
-        return $_SERVER['REQUEST_METHOD'] === 'POST';
+        return ($this->server['REQUEST_METHOD'] ?? 'GET') === 'POST';
     }
 
-    public function setCookie(string $name, $value, int $expire = 0, string $path = "/"): void
+    public function setCookie(string $name, string $value, int $expire = 0, string $path = '/'): void
     {
         \setcookie($name, $value, $expire, $path);
     }
-    public function input(string $key, $default = null)
+
+    public function input(string $key, mixed $default = null): mixed
     {
-        return $_REQUEST[$key] ?? $default;
+        return $this->post[$key] ?? $this->query[$key] ?? $default;
     }
 }

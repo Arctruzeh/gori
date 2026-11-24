@@ -1,42 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Database;
 
 use App\Config\DatabaseConfig;
 use PDO;
-use PDOException;
 
-class Connection
+final class Connection
 {
-    private static $instance = null;
-    private $pdo;
-
-    private function __construct()
+    public static function create(DatabaseConfig $config): PDO
     {
-        $config = DatabaseConfig::get();
-
-        $dsn = sprintf(
-            'pgsql:host=%s;port=%s;dbname=%s',
-            $config['host'],
-            $config['port'],
-            $config['dbname']
-        );
-
-        // Let exceptions bubble up or wrap them
-        // $this->pdo = new PDO(...) throws PDOException if validation/connection fails
-        $this->pdo = new PDO($dsn, $config['user'], $config['password'], [
+        return new PDO($config->toDsn(), $config->user, $config->password, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
         ]);
-    }
-
-    public static function get(): PDO
-    {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-
-        return self::$instance->pdo;
     }
 }

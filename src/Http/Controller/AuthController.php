@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controller;
 
 use App\Http\Request;
@@ -8,73 +10,92 @@ use App\Http\Session;
 use App\Model\User;
 use App\View\Renderer;
 
-class AuthController
+final class AuthController
 {
-    private $session;
-    private $request;
-    private $renderer;
-    private $userModel;
-
-    public function __construct(Session $session, Request $request, Renderer $renderer)
-    {
-        $this->session = $session;
-        $this->request = $request;
-        $this->renderer = $renderer;
-        $this->userModel = new User();
+    public function __construct(
+        private readonly Session $session,
+        private readonly Request $request,
+        private readonly Renderer $renderer,
+        private readonly User $userModel,
+    ) {
     }
 
-    public function showLogin()
+    public function showLogin(): Response
     {
-        return new Response($this->renderer->render('auth/login', ['error' => $this->session->getFlash('error')]));
+        return new Response($this->renderer->renderWithLayout('auth/login', [
+            'error' => $this->session->getFlash('error'),
+            'success' => $this->session->getFlash('success'),
+            'isLoggedIn' => $this->session->has('user_id'),
+            'username' => $this->session->get('username'),
+            'currentAction' => 'login',
+            'pageTitle' => 'Login - Genius or Idiot',
+            'layoutSize' => 'narrow',
+        ]));
     }
 
-    public function login()
+    public function login(): Response
     {
-        $username = $this->request->input('username');
-        $password = $this->request->input('password');
+        $username = (string) $this->request->input('username', '');
+        $password = (string) $this->request->input('password', '');
 
         $user = $this->userModel->findByUsername($username);
 
-        if ($user && $this->userModel->verifyPassword($password, $user['password_hash'])) {
-            $this->session->set('user_id', $user['id']);
-            $this->session->set('username', $user['username']);
-            return new Response('', 302, ['Location' => '/']);
+        if ($user !== null && $this->userModel->verifyPassword($password, (string) $user['password_hash'])) {
+            $this->clearGameSessionState();
+            $this->session->set('user_id', (int) $user['id']);
+            $this->session->set('username', (string) $user['username']);
+            return Response::redirect('/');
         }
 
         $this->session->setFlash('error', 'Invalid credentials');
-        return new Response('', 302, ['Location' => '/?action=login']);
+        return Response::redirect('/?action=login');
     }
 
-    public function showRegister()
+    public function showRegister(): Response
     {
-        return new Response($this->renderer->render('auth/register', ['error' => $this->session->getFlash('error')]));
+        return new Response($this->renderer->renderWithLayout('auth/register', [
+            'error' => $this->session->getFlash('error'),
+            'isLoggedIn' => $this->session->has('user_id'),
+            'username' => $this->session->get('username'),
+            'currentAction' => 'register',
+            'pageTitle' => 'Register - Genius or Idiot',
+            'layoutSize' => 'narrow',
+        ]));
     }
 
-    public function register()
+    public function register(): Response
     {
-        $username = $this->request->input('username');
-        $password = $this->request->input('password');
+        $username = (string) $this->request->input('username', '');
+        $password = (string) $this->request->input('password', '');
 
-        if (empty($username) || empty($password)) {
+        if ($username === '' || $password === '') {
             $this->session->setFlash('error', 'Username and password required');
-            return new Response('', 302, ['Location' => '/?action=register']);
+            return Response::redirect('/?action=register');
         }
 
         if ($this->userModel->create($username, $password)) {
             $this->session->setFlash('success', 'Registration successful! Please login.');
-            return new Response('', 302, ['Location' => '/?action=login']);
+            return Response::redirect('/?action=login');
         }
 
         $this->session->setFlash('error', 'Username already taken');
-        return new Response('', 302, ['Location' => '/?action=register']);
+        return Response::redirect('/?action=register');
     }
 
-    public function logout()
+    public function logout(): Response
     {
         $this->session->remove('user_id');
         $this->session->remove('username');
+        $this->clearGameSessionState();
+        return Response::redirect('/?action=login');
+    }
+
+    private function clearGameSessionState(): void
+    {
         $this->session->remove('score');
         $this->session->remove('streak');
-        return new Response('', 302, ['Location' => '/?action=login']);
+        $this->session->remove('highscore');
+        $this->session->remove('current_run_score_id');
+        $this->session->remove('pending_answers');
     }
 }

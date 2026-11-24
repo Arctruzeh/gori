@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http;
 
 /**
  * Session Class
  * Wraps PHP's $_SESSION superglobal for OOP access.
  */
-class Session
+final class Session
 {
     public function __construct()
     {
@@ -15,12 +17,12 @@ class Session
         }
     }
 
-    public function get(string $key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         return $_SESSION[$key] ?? $default;
     }
 
-    public function set(string $key, $value): void
+    public function set(string $key, mixed $value): void
     {
         $_SESSION[$key] = $value;
     }
@@ -39,15 +41,16 @@ class Session
     {
         return $_SESSION;
     }
-    public function setFlash(string $key, $message): void
+
+    public function setFlash(string $key, string $message): void
     {
         $_SESSION['flash'][$key] = $message;
     }
 
-    public function getFlash(string $key)
+    public function getFlash(string $key): ?string
     {
         if (isset($_SESSION['flash'][$key])) {
-            $message = $_SESSION['flash'][$key];
+            $message = (string) $_SESSION['flash'][$key];
             unset($_SESSION['flash'][$key]);
             return $message;
         }

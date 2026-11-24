@@ -1,27 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// Manual autoloading for now since we haven't updated composer fully or dumped autoload
-spl_autoload_register(function ($class) {
-    $prefix = 'App\\';
-    $base_dir = __DIR__ . '/../src/';
-    $len = strlen($prefix);
-    if (strncmp($prefix, $class, $len) !== 0)
-        return;
-    $relative_class = substr($class, $len);
-    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-    if (file_exists($file))
-        require $file;
-});
-
+use App\Config\DatabaseConfig;
 use App\Database\Connection;
+use App\Database\SchemaInitializer;
 
 try {
-    $pdo = Connection::get();
-    $sql = file_get_contents(__DIR__ . '/schema.sql');
-    $pdo->exec($sql);
+    $pdo = Connection::create(DatabaseConfig::fromEnvironment());
+    $initializer = new SchemaInitializer($pdo, __DIR__ . '/schema.sql');
+    $initializer->initialize();
     echo "Database schema initialized successfully.\n";
-} catch (Exception $e) {
+} catch (\Throwable $e) {
     echo "Error initializing database: " . $e->getMessage() . "\n";
+    exit(1);
 }

@@ -1,30 +1,53 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Config;
 
-class DatabaseConfig
+final class DatabaseConfig
 {
-    public static function get(): array
-    {
-        $databaseUrl = getenv('DATABASE_URL') ?: ($_ENV['DATABASE_URL'] ?? null);
+    public function __construct(
+        public readonly string $host,
+        public readonly string $port,
+        public readonly string $dbname,
+        public readonly string $user,
+        public readonly string $password,
+    ) {
+    }
 
-        if ($databaseUrl) {
-            $parsed = parse_url($databaseUrl);
-            return [
-                'host' => $parsed['host'],
-                'port' => $parsed['port'] ?? '5432',
-                'dbname' => ltrim($parsed['path'], '/'),
-                'user' => $parsed['user'],
-                'password' => $parsed['pass'] ?? '',
-            ];
+    public static function fromEnvironment(): self
+    {
+        $databaseUrl = \getenv('DATABASE_URL') ?: ($_ENV['DATABASE_URL'] ?? null);
+
+        if (\is_string($databaseUrl) && $databaseUrl !== '') {
+            $parsed = \parse_url($databaseUrl);
+            if (\is_array($parsed) && isset($parsed['host'], $parsed['user'])) {
+                return new self(
+                    host: (string) $parsed['host'],
+                    port: isset($parsed['port']) ? (string) $parsed['port'] : '5432',
+                    dbname: \ltrim((string) ($parsed['path'] ?? 'gori'), '/'),
+                    user: (string) $parsed['user'],
+                    password: (string) ($parsed['pass'] ?? ''),
+                );
+            }
         }
 
-        return [
-            'host' => 'localhost',
-            'port' => '5432',
-            'dbname' => 'gori',
-            'user' => 'postgres',
-            'password' => 'password',
-        ];
+        return new self(
+            host: 'localhost',
+            port: '5432',
+            dbname: 'gori',
+            user: 'postgres',
+            password: 'password',
+        );
+    }
+
+    public function toDsn(): string
+    {
+        return \sprintf(
+            'pgsql:host=%s;port=%s;dbname=%s',
+            $this->host,
+            $this->port,
+            $this->dbname
+        );
     }
 }
